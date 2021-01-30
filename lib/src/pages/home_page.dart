@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tul_entry_app/src/models/product_model.dart';
+import 'package:tul_entry_app/src/pages/carts_list_page.dart';
 import 'package:tul_entry_app/src/pages/create_product_page.dart';
 import 'package:tul_entry_app/src/pages/product_page.dart';
 import 'package:tul_entry_app/src/providers/productos_provider.dart';
@@ -12,6 +13,14 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Tul Products"),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.shopping_cart_outlined),
+            onPressed: (){
+              Navigator.pushNamed(context, CartListPage.routeName);
+            },
+          ),
+        ],
       ),
       body: ProductList(),
       floatingActionButton: FloatingActionButton(
@@ -42,7 +51,7 @@ class ProductList extends StatelessWidget {
               },
             );
           }else{
-            return CircularProgressIndicator();
+            return Center(child:CircularProgressIndicator());
           }
         }
       ),
