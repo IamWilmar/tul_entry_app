@@ -11,6 +11,8 @@ class CartListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color(0xFFA6C9B8),
+        elevation: 0.0,
         title: Text("Cart List"),
       ),
       body: CartListWidget(),
@@ -53,7 +55,7 @@ class FutureListWidget extends StatelessWidget {
           return ListView.builder(
             itemCount: carts.length,
             itemBuilder: (BuildContext context, int index ){
-              return CartsTile(cart: carts[index]);
+              return CartsTile(cart: carts[(carts.length-1)-index]);
             },
           );
         }else{
@@ -69,12 +71,20 @@ class CartsTile extends StatelessWidget {
   const CartsTile({this.cart});
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: cart.status == "pending" ? Text("Carrito Actual") : Text("Compra realizada"),
-      subtitle: Text(cart.status),
-      onTap: (){
-        Navigator.pushNamed(context, ShoppingCartPage.routeName, arguments: cart);
-      },
+    return Container(
+      padding: EdgeInsets.symmetric(vertical:20.0),
+      margin: EdgeInsets.symmetric(vertical:3.0, horizontal:5.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20.0),
+        color: cart.status == "pending" ? Color(0xFF5D987B): Color(0xFFB3D0C2),
+      ),
+      child: ListTile(
+        title: cart.status == "pending" ? Text("Carrito Actual") : Text("Compra realizada"),
+        subtitle: Text(cart.status),
+        onTap: (){
+          Navigator.pushNamed(context, ShoppingCartPage.routeName, arguments: cart);
+        },
+      ),
     );
   }
 }

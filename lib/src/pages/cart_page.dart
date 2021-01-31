@@ -13,28 +13,34 @@ class ShoppingCartPage extends StatelessWidget {
     final CartsModel actualCart = ModalRoute.of(context).settings.arguments;
     final cartProvider = CartsProvider();
     final cartBloc = Provider.callCart(context);
+    final blocproduct = Provider.callProductCarts(context);
     cartBloc.updateState(actualCart.status);
+    blocproduct.updateQuantity(0);
     return Scaffold(
       appBar: AppBar(
+        elevation: 0.0,
+        backgroundColor: Color(0xFFA6C9B8),
         title: Text("Cart"),
         actions: [
           StreamBuilder(
-            stream: cartBloc.statusStream,
-            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-              final status = snapshot.data;
-              return RaisedButton.icon(
-                icon: Icon(Icons.done),
-                label: status == "pending" ? Text("Buy order") : Text("Completed"),
-                onPressed: status == "pending"
-                ?(){
-                  cartProvider.editCartStatus(actualCart);
-                  cartBloc.updateState(actualCart.status);
-                  Navigator.pop(context);
-                  }
-                : null,
-              );
-            }
-          ),
+              stream: cartBloc.statusStream,
+              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                final status = snapshot.data;
+                return RaisedButton.icon(
+                  color: Color(0xFF558B71),
+                  icon: Icon(Icons.done),
+                  label: status == "pending"
+                      ? Text("Buy order")
+                      : Text("Completed"),
+                  onPressed: status == "pending"
+                      ? () {
+                          cartProvider.editCartStatus(actualCart);
+                          cartBloc.updateState(actualCart.status);
+                          Navigator.pop(context);
+                        }
+                      : null,
+                );
+              }),
         ],
       ),
       body: ProductsInCartList(cartInfo: actualCart),
@@ -50,16 +56,14 @@ class ProductsInCartList extends StatelessWidget {
     final productsInCartProvider = ProductsCartsProvider();
     final blocProductCart = Provider.callProductCarts(context);
     return StreamBuilder(
-      stream: blocProductCart.quantityStream,
-      builder: (context, snapshot) {
-        if(blocProductCart.quantity != null){
-          print("hello");
-        }
-        return Container(
-          child: FutureProductList(productsInCartProvider: productsInCartProvider, cartInfo: cartInfo),
-        );
-      }
-    );
+        stream: blocProductCart.quantityStream,
+        builder: (context, snapshot) {
+          return Container(
+            child: FutureProductList(
+                productsInCartProvider: productsInCartProvider,
+                cartInfo: cartInfo),
+          );
+        });
   }
 }
 
@@ -110,21 +114,34 @@ class ProductCartTile extends StatelessWidget {
       background: Container(
         color: Colors.red,
       ),
-      onDismissed: (direction){
+      onDismissed: currentCart.status == "pending" 
+      ? (direction) {
         productCartProvider.deleteProductFromCart(productoInCart.id);
-      },
-      child: ListTile(
-        title: FutureBuilder(
-          future: productCartProvider.getProductName(productoInCart.productId),
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot){
-            return snapshot.hasData ? Text(snapshot.data) : Text("Waiting..."); 
+      }
+      : null,
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 3.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20.0),
+          color: currentCart.status == "pending" ? Color(0xFF558B71) : Color(0xFFB3D0C2),
+        ),
+        child: ListTile(
+          title: FutureBuilder(
+            future:
+                productCartProvider.getProductName(productoInCart.productId),
+            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+              return snapshot.hasData
+                  ? Text(snapshot.data)
+                  : Text("Waiting...");
+            },
+          ),
+          subtitle: Text(productoInCart.quantity.toString()),
+          enabled: currentCart.status == "pending" ? true : false,
+          onTap: () {
+            Navigator.pushNamed(context, EditProductPage.routeName,
+                arguments: productoInCart);
           },
         ),
-        subtitle: Text(productoInCart.quantity.toString()),
-        enabled: currentCart.status == "pending" ? true : false,
-        onTap: () {
-          Navigator.pushNamed(context, EditProductPage.routeName, arguments: productoInCart);
-        },
       ),
     );
   }
@@ -138,7 +155,7 @@ class QuantityNumber extends StatelessWidget {
     final blocProductCart = Provider.callProductCarts(context);
     return StreamBuilder(
       stream: blocProductCart.quantityStream,
-      builder: (BuildContext context, AsyncSnapshot snapshot){
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
         return Container(
           child: Text(quantity),
         );

@@ -12,7 +12,11 @@ class EditProductPage extends StatelessWidget {
     final blocProductCart = Provider.callProductCarts(context);
     blocProductCart.updateProduct(productInCart);
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        elevation: 0.0,
+        title: Text("Actualizar Producto"),
+        backgroundColor: Color(0xFFA6C9B8),
+      ),
       body: SingleChildScrollView(
         child: ProductInCartInfo(product: productInCart),
       ),
@@ -28,11 +32,18 @@ class ProductInCartInfo extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          ProductName(product: product),
-          Container(
-            width: 100,
-            child: Quantity(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ProductName(product: product),
+              SizedBox(width: 50),
+              Container(
+                width: 100,
+                child: Quantity(),
+              ),
+            ],
           ),
           UpdateButton(product: product),
         ],
@@ -51,9 +62,17 @@ class Quantity extends StatelessWidget {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           return Container(
             child: TextFormField(
+              decoration: InputDecoration(
+                counterText: blocProductCart.quantity.toString(),
+              ),
               initialValue: blocProductCart.quantity.toString(),
               onChanged: (val) {
-                blocProductCart.updateQuantity(int.parse(val));
+                var number = num.tryParse(val);
+                if (number != null ) {
+                  blocProductCart.updateQuantity(int.parse(val));
+                } else {
+                  blocProductCart.updateQuantity(blocProductCart.quantity);
+                }
               },
             ),
           );
@@ -74,19 +93,20 @@ class UpdateButton extends StatelessWidget {
       stream: blocProductCart.quantityStream,
       builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
         return RaisedButton.icon(
+          color: Color(0xFF4E7E67),
           icon: Icon(Icons.save),
-          label: Text("Update Item"),
-          onPressed: () {
+          label: Text("Actualizar Pedido", style: TextStyle(color: Colors.white)),
+          onPressed: (blocProductCart.quantity > 0 && blocProductCart.quantity != null) ? () {
             final model = new ProductCartsModel(
-              id: product.id,
-              cartId: product.cartId,
-              productId: product.productId,
-              quantity: blocProductCart.quantity
-            );
+                id: product.id,
+                cartId: product.cartId,
+                productId: product.productId,
+                quantity: blocProductCart.quantity);
             productCartProvider.updateProductFromCart(model);
             blocProductCart.updateQuantity(0);
             Navigator.pop(context);
-          },
+          }
+          : null,
         );
       },
     );

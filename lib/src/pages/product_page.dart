@@ -12,12 +12,29 @@ class ProductPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ProductModel product = ModalRoute.of(context).settings.arguments;
+    final bloc = Provider.callProductCarts(context);
+    bloc.updateQuantity(0);
     return Scaffold(
       appBar: AppBar(
-        title: Text(product.id),
+        elevation: 0.0,
+        backgroundColor: Colors.transparent,
+        iconTheme: IconThemeData(
+          color: Colors.black,
+        ),
       ),
-      body: SingleChildScrollView(
-        child: ProductContent(product: product),
+      body: Stack(
+        children: [
+          Container(
+            margin: EdgeInsets.only(right: 5.0, left: 5.0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20.0),
+              color: Color(0xFFA6C9B8),
+            ),
+          ),
+          SingleChildScrollView(
+            child: ProductContent(product: product),
+          ),
+        ],
       ),
     );
   }
@@ -26,15 +43,22 @@ class ProductPage extends StatelessWidget {
 class ProductContent extends StatelessWidget {
   final ProductModel product;
   final TextStyle productNameStyle = TextStyle(
-    fontSize: 40.0,
+    fontSize: 50.0,
     letterSpacing: 1.5,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w800,
   );
   final TextStyle skuStyle = TextStyle(
       fontSize: 20.0,
       letterSpacing: 1.5,
       fontWeight: FontWeight.w600,
-      color: Colors.grey[400]);
+      color: Colors.grey[600]);
+
+  final TextStyle descStyle = TextStyle(
+      fontSize: 15.0,
+      letterSpacing: 1.5,
+      fontWeight: FontWeight.w600,
+      color: Colors.black);
+
   ProductContent({@required this.product});
 
   @override
@@ -44,17 +68,11 @@ class ProductContent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Center(
-            child: CircleAvatar(
-              backgroundColor: Colors.blue,
-              maxRadius: 100,
-            ),
-          ),
           SizedBox(height: 10.0),
           Text(product.nombre, style: productNameStyle),
-          Text(product.sku, style: skuStyle),
+          Text("SKU: " + product.sku, style: skuStyle),
           SeparationLine(),
-          Text(product.descripcion, textAlign: TextAlign.justify),
+          Text(product.descripcion, textAlign: TextAlign.justify, style: descStyle),
           SeparationLine(),
           CartSection(product: product),
         ],
@@ -85,27 +103,34 @@ class CartSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final bloc = Provider.callProductCarts(context);
     return StreamBuilder(
-      stream: bloc.quantityStream,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        return Container(
-          child: Row(
-            children: [
-              Container(
-                width: 50,
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    counterText: bloc.quantity.toString(),
+        stream: bloc.quantityStream,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          return Container(
+            child: Row(
+              children: [
+                Container(
+                  width: 50,
+                  child: TextFormField(
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      hintText: "#",
+                      counterText: bloc.quantity.toString(),
+                    ),
+                    onChanged: (val) {
+                      var number = num.tryParse(val);
+                      if (number != null) {
+                        bloc.updateQuantity(int.parse(val));
+                      } else {
+                        bloc.updateQuantity(0);
+                      }
+                    },
                   ),
-                  onChanged: (val) {bloc.updateQuantity(int.parse(val));},
                 ),
-
-              ),
-              CartButton(product: product, currentProductCart:  bloc),
-            ],
-          ),
-        );
-      }
-    );
+                CartButton(product: product, currentProductCart: bloc),
+              ],
+            ),
+          );
+        });
   }
 }
 
@@ -117,24 +142,31 @@ class CartButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final cart = CartsProvider();
     final productCarts = ProductsCartsProvider();
+    final bloc = Provider.callProductCarts(context);
     final CartsModel newCartModel = new CartsModel(
       status: "pending",
     );
     final ProductCartsModel newProductCarts = new ProductCartsModel(
       productId: product.id,
       quantity: currentProductCart.quantity,
-
     );
     return Container(
-      child: IconButton(
-        icon: Icon(Icons.shopping_cart, size: 50.0),
-        onPressed: ()async {
-          final cardId = cart.crearCarrito(newCartModel);
-          newProductCarts.cartId = await cardId;
-          productCarts.crearProductoCarrito(newProductCarts);
-          Navigator.of(context).pop();
-        },
-      ),
+      child: StreamBuilder(
+          stream: bloc.quantityStream,
+          initialData: 0,
+          builder: (context, snapshot) {
+            return IconButton(
+              icon: Icon(Icons.shopping_cart, size: 50.0),
+              onPressed: (snapshot.data > 0 && snapshot.hasData)
+                  ? () async {
+                      final cardId = cart.crearCarrito(newCartModel);
+                      newProductCarts.cartId = await cardId;
+                      productCarts.crearProductoCarrito(newProductCarts);
+                      Navigator.of(context).pop();
+                    }
+                  : null,
+            );
+          }),
     );
   }
 }

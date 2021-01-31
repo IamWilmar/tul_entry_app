@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:tul_entry_app/src/blocs/create_product_bloc.dart';
 import 'package:tul_entry_app/src/blocs/provider.dart';
 import 'package:tul_entry_app/src/models/product_model.dart';
-import 'package:tul_entry_app/src/pages/home_page.dart';
 import 'package:tul_entry_app/src/providers/productos_provider.dart';
 
 class CreateProductPage extends StatelessWidget {
@@ -119,7 +118,7 @@ class Boton extends StatelessWidget {
       descripcion : bloc.descripcionProducto,
     );
     productProvider.crearProducto(productoNuevo);
-    Navigator.pushNamed(context, HomePage.routeName);
+    Navigator.pop(context);
   }
 
 }
