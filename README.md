@@ -4,12 +4,19 @@ Esta es la prueba tecnica para el puesto desarrollador Flutter en Tül
 
 La aplicacion consta de las siguientes pantallas:
 
--Home Page: En esta pantalla se encuentran todos los productos, y los botones para
+## Home Page
+
+En esta pantalla se encuentran todos los productos, y los botones para
 acceder al carrito.
 
--CartListPage: En esta pantalla se pueden visualizar el carrito de compras actual y los carritos que ya pasaron de un estado de completado.
+## Cart List Page
 
--CartPage: En esta pantalla se observan los productos que estan dentro del carrito, cada Tile del producto esta creada apartir de in Dissmisible, el cual permite eliminar el elemento del carrito al hacer slide. A su vez al dar tap en cada elemento se puede editar la cantidad productos que se van a agregar.
+En esta pantalla se pueden visualizar el carrito de compras actual y los carritos que ya pasaron de un estado de completado.
+
+## Cart Page
+En esta pantalla se observan los productos que estan dentro del carrito, cada Tile del producto esta creada apartir de in Dissmisible, el cual permite eliminar el elemento del carrito al hacer slide. A su vez al dar tap en cada elemento se puede editar la cantidad productos que se van a agregar.
+
+
 
 ## Getting Started
 
