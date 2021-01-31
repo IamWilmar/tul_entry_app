@@ -102,7 +102,7 @@ class ProductTileContent extends StatelessWidget {
         children: [
           Text(product.nombre, style: nameStyle),
           SizedBox(height: 20.0,),
-          Text(product.descripcion, style: descStyle),
+          Text(product.descripcion, style: descStyle, overflow: TextOverflow.fade, maxLines: 4),
         ],
       ),
     );

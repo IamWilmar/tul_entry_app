@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tul_entry_app/src/models/product_model.dart';
 import 'package:tul_entry_app/src/pages/carts_list_page.dart';
-import 'package:tul_entry_app/src/pages/create_product_page.dart';
 import 'package:tul_entry_app/src/providers/productos_provider.dart';
 import 'package:tul_entry_app/src/widgets/product_tile.dart';
 
@@ -33,12 +32,6 @@ class HomePage extends StatelessWidget {
           SeparationBar(),
           ProductList(),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, CreateProductPage.routeName);
-        },
-        child: Icon(Icons.add),
       ),
     );
   }
