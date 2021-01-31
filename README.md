@@ -15,10 +15,13 @@ acceder al carrito.
 
 En esta pantalla se pueden visualizar el carrito de compras actual y los carritos que ya pasaron de un estado de completado.
 
+![alt-text](images/cartlist.gif)
+
 ## Cart Page
 En esta pantalla se observan los productos que estan dentro del carrito, cada Tile del producto esta creada apartir de in Dissmisible, el cual permite eliminar el elemento del carrito al hacer slide. A su vez al dar tap en cada elemento se puede editar la cantidad productos que se van a agregar.
 
-
+BORRAR UN PRODUCTO
+![alt-text](images/cartdismiss.gif)
 
 ## Getting Started
 
