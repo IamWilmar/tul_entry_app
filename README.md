@@ -9,6 +9,8 @@ La aplicacion consta de las siguientes pantallas:
 En esta pantalla se encuentran todos los productos, y los botones para
 acceder al carrito.
 
+![alt-text](images/homepage.gif)
+
 ## Cart List Page
 
 En esta pantalla se pueden visualizar el carrito de compras actual y los carritos que ya pasaron de un estado de completado.
