@@ -36,10 +36,18 @@ class ProductsCartsProvider{
     return name;
   }
 
-    Future<bool> deleteProductFromCart(String productinCartId) async {
+  Future<bool> deleteProductFromCart(String productinCartId) async {
     final url = "$_url/products_carts/$productinCartId.json";
     final response = await http.delete(url);
     print(json.decode(response.body));
+    return true;
+  }
+
+  Future<bool> updateProductFromCart(ProductCartsModel productInCart) async {
+    final url = "$_url/products_carts/${productInCart.id}.json";
+    final response = await http.put(url, body: productCartsModelToJson(productInCart));
+    final data = json.decode(response.body);
+    print(data);
     return true;
   }
 

@@ -3,6 +3,7 @@ import 'package:tul_entry_app/src/blocs/provider.dart';
 import 'package:tul_entry_app/src/pages/cart_page.dart';
 import 'package:tul_entry_app/src/pages/carts_list_page.dart';
 import 'package:tul_entry_app/src/pages/create_product_page.dart';
+import 'package:tul_entry_app/src/pages/edit_product_page.dart';
 import 'package:tul_entry_app/src/pages/home_page.dart';
 import 'package:tul_entry_app/src/pages/product_page.dart';
  
@@ -21,7 +22,8 @@ class MyApp extends StatelessWidget {
           ProductPage.routeName       : (BuildContext context) => ProductPage(),
           CreateProductPage.routeName : (BuildContext context) => CreateProductPage(),
           CartListPage.routeName      : (BuildContext context) => CartListPage(),
-          ShoppingCartPage.routeName  : (BuildContext context) => ShoppingCartPage()
+          ShoppingCartPage.routeName  : (BuildContext context) => ShoppingCartPage(),
+          EditProductPage.routeName   : (BuildContext context) => EditProductPage(),
         },
       ),
     );

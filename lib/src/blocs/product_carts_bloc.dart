@@ -1,4 +1,5 @@
 import 'package:rxdart/rxdart.dart';
+import 'package:tul_entry_app/src/models/product_carts_model.dart';
 
 class ProductCartsBloc{
 
@@ -20,6 +21,18 @@ class ProductCartsBloc{
 
   updateQuantity(int number){
     number == null ? _quantityController.sink.addError("Invalid value") : _quantityController.sink.add(number);
+  }
+
+  updateProduct(ProductCartsModel product){
+    if(product != null){
+      _productIdController.sink.add(product.productId);
+      _cartIdController.sink.add(product.cartId);
+      _quantityController.sink.add(product.quantity);
+    }else{
+       _quantityController.sink.addError("Invalid value");
+       _cartIdController.sink.addError("Invalid value");
+       _productIdController.sink.addError("Invalid value");
+    }
   }
 
   dispose(){

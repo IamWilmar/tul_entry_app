@@ -28,15 +28,15 @@ class CartListWidget extends StatelessWidget {
       child: StreamBuilder(
         stream: cartBloc.statusStream,
         builder: (context, snapshot) {
-          return FutireListWidget(cartProvider: cartProvider);
+          return FutureListWidget(cartProvider: cartProvider);
         }
       ),
     );
   }
 }
 
-class FutireListWidget extends StatelessWidget {
-  const FutireListWidget({
+class FutureListWidget extends StatelessWidget {
+  const FutureListWidget({
     Key key,
     @required this.cartProvider,
   }) : super(key: key);

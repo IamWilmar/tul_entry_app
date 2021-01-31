@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tul_entry_app/src/blocs/provider.dart';
 import 'package:tul_entry_app/src/models/carts_model.dart';
 import 'package:tul_entry_app/src/models/product_carts_model.dart';
+import 'package:tul_entry_app/src/pages/edit_product_page.dart';
 import 'package:tul_entry_app/src/providers/carts_provider.dart';
 import 'package:tul_entry_app/src/providers/product_carts_provider.dart';
 
@@ -28,6 +29,7 @@ class ShoppingCartPage extends StatelessWidget {
                 ?(){
                   cartProvider.editCartStatus(actualCart);
                   cartBloc.updateState(actualCart.status);
+                  Navigator.pop(context);
                   }
                 : null,
               );
@@ -46,27 +48,52 @@ class ProductsInCartList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productsInCartProvider = ProductsCartsProvider();
-    return Container(
-      child: FutureBuilder(
-          future: productsInCartProvider.cargarProductos(cartInfo.id),
-          builder: (BuildContext context,
-              AsyncSnapshot<List<ProductCartsModel>> snapshot) {
-            if (snapshot.hasData) {
-              final productosinCart = snapshot.data;
-              return ListView.builder(
-                itemCount: productosinCart.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return ProductCartTile(
-                    productoInCart: productosinCart[index],
-                    currentCart: cartInfo,
-                  );
-                },
-              );
-            } else {
-              return Center(child: CircularProgressIndicator());
-            }
-          }),
+    final blocProductCart = Provider.callProductCarts(context);
+    return StreamBuilder(
+      stream: blocProductCart.quantityStream,
+      builder: (context, snapshot) {
+        if(blocProductCart.quantity != null){
+          print("hello");
+        }
+        return Container(
+          child: FutureProductList(productsInCartProvider: productsInCartProvider, cartInfo: cartInfo),
+        );
+      }
     );
+  }
+}
+
+class FutureProductList extends StatelessWidget {
+  const FutureProductList({
+    Key key,
+    @required this.productsInCartProvider,
+    @required this.cartInfo,
+  }) : super(key: key);
+
+  final ProductsCartsProvider productsInCartProvider;
+  final CartsModel cartInfo;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+        future: productsInCartProvider.cargarProductos(cartInfo.id),
+        builder: (BuildContext context,
+            AsyncSnapshot<List<ProductCartsModel>> snapshot) {
+          if (snapshot.hasData) {
+            final productosinCart = snapshot.data;
+            return ListView.builder(
+              itemCount: productosinCart.length,
+              itemBuilder: (BuildContext context, int index) {
+                return ProductCartTile(
+                  productoInCart: productosinCart[index],
+                  currentCart: cartInfo,
+                );
+              },
+            );
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        });
   }
 }
 
@@ -96,9 +123,26 @@ class ProductCartTile extends StatelessWidget {
         subtitle: Text(productoInCart.quantity.toString()),
         enabled: currentCart.status == "pending" ? true : false,
         onTap: () {
-          //Navigator.pushNamed(context, ProductPage.routeName, arguments: producto);
+          Navigator.pushNamed(context, EditProductPage.routeName, arguments: productoInCart);
         },
       ),
+    );
+  }
+}
+
+class QuantityNumber extends StatelessWidget {
+  final String quantity;
+  const QuantityNumber({@required this.quantity});
+  @override
+  Widget build(BuildContext context) {
+    final blocProductCart = Provider.callProductCarts(context);
+    return StreamBuilder(
+      stream: blocProductCart.quantityStream,
+      builder: (BuildContext context, AsyncSnapshot snapshot){
+        return Container(
+          child: Text(quantity),
+        );
+      },
     );
   }
 }
