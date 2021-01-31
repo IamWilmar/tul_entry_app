@@ -47,4 +47,14 @@ class CartsProvider {
     print(data);
     return cartsList;
   }
+
+  Future<bool> editCartStatus(CartsModel cart) async {
+    final url = "$_url/carts/${cart.id}.json";
+    cart.status = "completed";
+    final response = await http.put(url, body: cartsModelToJson(cart));
+    final data = json.decode(response.body);
+    print(data);
+    return true;
+  }
+
 }
